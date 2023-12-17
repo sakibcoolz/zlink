@@ -3,6 +3,7 @@ package app
 import (
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"zlink/config"
 	"zlink/controller"
@@ -26,7 +27,9 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
-	store := domain.NewStore(logger)
+	memStore := domain.NewMemoryStore(make(map[string]string), new(sync.Mutex))
+
+	store := domain.NewStore(logger, memStore)
 
 	service := service.NewService(logger, store)
 
@@ -37,6 +40,8 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 	preapproute := router.Group(literals.VERSIONONE)
 
 	preapproute.GET("/health", controller.Health)
+
+	preapproute.POST("/addurl", controller.AddUrl)
 
 	return router
 }
