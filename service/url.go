@@ -1,21 +1,28 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
-	"sync"
 	"zlink/model"
 	"zlink/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Service) AddUrl(ctx *gin.Context, addUrl model.AddUrl) string {
+func (s *Service) AddUrl(ctx *gin.Context, addUrl model.AddUrl) (string, error) {
 	urlStr := make(chan string)
 	counter := make(chan int)
-	wg := new(sync.WaitGroup)
-	wg.Add(2)
+
+	if utils.UrlNotAllowed(addUrl.URL) {
+		err := errors.New("this url not allowed")
+		s.log.Error(err.Error())
+
+		return "", err
+	}
+
+	addUrl.URL = utils.ModifiyUrl(addUrl.URL)
 
 	go func(urlStr chan string) {
 		urlStr <- utils.UrlPath()
@@ -31,7 +38,7 @@ func (s *Service) AddUrl(ctx *gin.Context, addUrl model.AddUrl) string {
 
 	return fmt.Sprintf("http://%s:%s/%s", os.Getenv("SERVICEHOST"),
 		os.Getenv("SERVICEPORT"),
-		url)
+		url), nil
 }
 
 func (s *Service) GetUrl(path string) (string, error) {
