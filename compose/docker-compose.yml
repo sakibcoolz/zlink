@@ -1,0 +1,15 @@
+version: '3'
+services:
+  zregistry-service:
+    image: ${service}
+    hostname: ${domain}.${host}
+    container_name: ${domain}.${host}
+    ports:
+      - ${port}:${port}
+    environment:
+      - SERVICEHOST=${domain}.${host}
+      - SERVICEPORT=${port}
+    tty: true
+networks:
+  backend:
+    driver: bridge
