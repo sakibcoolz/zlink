@@ -17,6 +17,7 @@ type Service struct {
 
 type IService interface {
 	AddUrl(ctx *gin.Context, addUrl model.AddUrl) string
+	GetUrl(path string) (string, error)
 }
 
 func NewService(logger *zap.Logger, store domain.IStore) *Service {

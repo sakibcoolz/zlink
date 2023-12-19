@@ -33,3 +33,8 @@ func (s *Service) AddUrl(ctx *gin.Context, addUrl model.AddUrl) string {
 		os.Getenv("SERVICEPORT"),
 		url)
 }
+
+func (s *Service) GetUrl(path string) (string, error) {
+
+	return s.store.GetUrl(path)
+}
