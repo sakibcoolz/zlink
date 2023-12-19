@@ -8,13 +8,15 @@ import (
 )
 
 type Controller struct {
-	log     *zap.Logger
-	service service.IService
+	log      *zap.Logger
+	validate *validator.Validate
+	service  service.IService
 }
 
 func NewController(log *zap.Logger, service service.IService, validate *validator.Validate) *Controller {
 	return &Controller{
-		log:     log,
-		service: service,
+		log:      log,
+		validate: validate,
+		service:  service,
 	}
 }
