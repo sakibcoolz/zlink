@@ -1,6 +1,7 @@
 package service
 
 import (
+	"zlink/config"
 	"zlink/domain"
 	"zlink/model"
 
@@ -9,12 +10,13 @@ import (
 )
 
 type Service struct {
-	log   *zap.Logger
-	store domain.IStore
+	log    *zap.Logger
+	store  domain.IStore
+	config *config.Config
 }
 
 type IService interface {
-	AddUrl(ctx *gin.Context, addUrl model.AddUrl) error
+	AddUrl(ctx *gin.Context, addUrl model.AddUrl) string
 }
 
 func NewService(logger *zap.Logger, store domain.IStore) *Service {

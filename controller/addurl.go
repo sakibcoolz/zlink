@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"net/http"
 	"zlink/model"
 	"zlink/utils"
 
@@ -28,4 +29,7 @@ func (c *Controller) AddUrl(ctx *gin.Context) {
 		return
 	}
 
+	url := c.service.AddUrl(ctx, addUrl)
+
+	ctx.String(http.StatusOK, url)
 }

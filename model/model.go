@@ -3,7 +3,7 @@ package model
 import "sync"
 
 type AddUrl struct {
-	URL string `json:"url" validate:"required,url"`
+	URL string `json:"url" validate:"required"`
 }
 
 type ErrorResponse struct {
@@ -14,4 +14,9 @@ type ErrorResponse struct {
 type MemoryStore struct {
 	Data map[string]string
 	Mt   *sync.Mutex
+}
+
+type CountStore struct {
+	Count int
+	Mt    sync.Mutex
 }

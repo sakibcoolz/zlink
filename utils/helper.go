@@ -16,13 +16,23 @@ func ToCharStr(i int) string {
 func UrlPath() string {
 	j := julianday.Date(time.Now())
 
-	return JulianToStringEncode(int(j))
+	return ToEncode(int(j))
 }
 
-func JulianToStringEncode(val int) string {
+func ToEncode(val int) string {
 	ints := splitToGigits(val)
+	strUrl := IntToStringEncode(ints)
+	miliUrl := IntToStringEncode(splitToGigits(MiliSeconds()))
+
+	strUrl = append(strUrl, miliUrl...)
+
+	return strings.Join(strUrl, "")
+}
+
+func IntToStringEncode(ints []int) []string {
 	back, forword := 0, 0
 	data := make([]int, 0)
+
 	strslice := make([]string, 0)
 	for i := 0; i < len(ints); i = i + 2 {
 		if len(ints) <= i+1 {
@@ -40,12 +50,24 @@ func JulianToStringEncode(val int) string {
 		if 26 >= back {
 			strslice = append(strslice, ToCharStr(back))
 		} else {
-			strslice = append(strslice, ToCharStr(data[0]), ToCharStr(data[1]))
+			strslice = append(strslice, ToCharStr(SwapAndSub(data[0], data[1])))
 		}
 		data = make([]int, 0)
 	}
 
-	return strings.Join(strslice, "")
+	return strslice
+}
+
+func SwapAndSub(i, j int) int {
+	if i < j {
+		return j - i
+	}
+
+	return i - j
+}
+
+func MiliSeconds() int {
+	return int(time.Now().UnixNano() / int64(time.Millisecond))
 }
 
 func reverseInt(s []int) {
