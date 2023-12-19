@@ -16,6 +16,7 @@ type Store struct {
 type IStore interface {
 	GetCounter() int
 	UrlStore(map[string]string)
+	GetUrl(path string) (string, error)
 }
 
 func NewStore(logger *zap.Logger, ms *model.MemoryStore, sc *model.CountStore) *Store {
