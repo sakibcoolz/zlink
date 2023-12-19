@@ -25,6 +25,4 @@ func (c *Controller) GetUrl(ctx *gin.Context) {
 	}
 
 	ctx.Redirect(http.StatusFound, url)
-
-	return
 }

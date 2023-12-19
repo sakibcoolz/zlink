@@ -29,7 +29,14 @@ func (c *Controller) AddUrl(ctx *gin.Context) {
 		return
 	}
 
-	url := c.service.AddUrl(ctx, addUrl)
+	url, err := c.service.AddUrl(ctx, addUrl)
+	if err != nil {
+		c.log.Error(err.Error())
+
+		utils.ErrorResponse(ctx, err, http.StatusBadRequest)
+
+		return
+	}
 
 	ctx.String(http.StatusOK, url)
 }

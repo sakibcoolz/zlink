@@ -16,7 +16,7 @@ type Service struct {
 }
 
 type IService interface {
-	AddUrl(ctx *gin.Context, addUrl model.AddUrl) string
+	AddUrl(ctx *gin.Context, addUrl model.AddUrl) (string, error)
 	GetUrl(path string) (string, error)
 }
 
