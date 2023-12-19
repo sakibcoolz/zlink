@@ -9,4 +9,14 @@ run:
 	SERVICEPORT=$(port) \
 	$(GORUN) cmd/main.go
 
+build:
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o $(build) ./cmd/
+
+docker-start:
+	make -C compose start
+
+docker-stop:
+	make -C compose stop
+
+
 .PHONY: run
