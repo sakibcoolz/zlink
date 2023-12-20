@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"zlink/model"
 	"zlink/utils"
@@ -24,6 +23,10 @@ func (s *Service) AddUrl(ctx *gin.Context, addUrl model.AddUrl) (string, error) 
 
 	addUrl.URL = utils.ModifiyUrl(addUrl.URL)
 
+	if path := s.store.GetUrlMapping(addUrl.URL); path != "" {
+		return utils.UrlMaker(path), nil
+	}
+
 	go func(urlStr chan string) {
 		urlStr <- utils.UrlPath()
 	}(urlStr)
@@ -36,9 +39,7 @@ func (s *Service) AddUrl(ctx *gin.Context, addUrl model.AddUrl) (string, error) 
 
 	go s.store.UrlStore(map[string]string{url: addUrl.URL})
 
-	return fmt.Sprintf("http://%s:%s/%s", os.Getenv("SERVICEHOST"),
-		os.Getenv("SERVICEPORT"),
-		url), nil
+	return utils.UrlMaker(url), nil
 }
 
 func (s *Service) GetUrl(path string) (string, error) {

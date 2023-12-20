@@ -29,9 +29,11 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	memStore := domain.NewMemoryStore(make(map[string]string), new(sync.Mutex))
 
+	mapRevStore := domain.NewMappingRev(make(map[string]string), new(sync.Mutex))
+
 	cntStore := domain.NewCountStore(0, new(sync.Mutex))
 
-	store := domain.NewStore(logger, memStore, cntStore)
+	store := domain.NewStore(logger, memStore, cntStore, mapRevStore)
 
 	service := service.NewService(logger, store)
 
