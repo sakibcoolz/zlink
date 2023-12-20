@@ -41,7 +41,7 @@ func NewMemoryStore(data map[string]string, mt *sync.Mutex) *model.MemoryStore {
 func NewCountStore(count int, mt *sync.Mutex) *model.CountStore {
 	return &model.CountStore{
 		Count: count,
-		Mt:    *mt,
+		Mt:    mt,
 	}
 }
 

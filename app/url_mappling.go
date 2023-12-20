@@ -54,8 +54,9 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 func TerminateService(stopService chan os.Signal, log *zap.Logger) {
 	log.Info("Service Started")
-	select {
-	case <-stopService:
+
+	if _, ok := <-stopService; ok {
+
 		log.Info("Terminating service")
 
 		os.Exit(0)

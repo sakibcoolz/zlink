@@ -10,7 +10,7 @@ import (
 )
 
 func ToCharStr(i int) string {
-	return string('A' - 1 + i)
+	return fmt.Sprintf("%c", ('A' - 1 + i))
 }
 
 func UrlPath() string {
@@ -21,7 +21,9 @@ func UrlPath() string {
 
 func ToEncode(val int) string {
 	ints := splitToGigits(val)
+
 	strUrl := IntToStringEncode(ints)
+
 	miliUrl := IntToStringEncode(splitToGigits(MiliSeconds()))
 
 	strUrl = append(strUrl, miliUrl...)
