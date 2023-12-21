@@ -25,3 +25,13 @@ type MappingRev struct {
 	URLRevMapping map[string]string
 	Mt            *sync.Mutex
 }
+
+type URLCountCollections struct {
+	Mt          *sync.Mutex
+	Collections Collections
+}
+
+type Collections struct {
+	URLs   []string
+	Counts []int
+}
