@@ -6,6 +6,7 @@ docker-image:
 
 run:
 	SERVICEHOST=$(localhost) \
+	VERSION=$(version) \
 	SERVICEPORT=$(port) \
 	$(GORUN) cmd/main.go
 
