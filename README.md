@@ -45,5 +45,7 @@ Response Body:
 ------------------------------------------------------------------------
 Docker image :- https://hub.docker.com/r/sakibcoolz/zlink_service
 or run this dierctly
+```
 docker run -e SERVICEHOST=localhost -e SERVICEPORT=10000 -p 10000:10000 sakibcoolz/zlink_service
+```
 
