@@ -52,7 +52,7 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	router.GET("/:path", controller.GetUrl)
 
-	preapproute := router.Group("/" + os.Getenv(literals.VERSION))
+	preapproute := router.Group("/v1")
 
 	preapproute.GET(literals.HEALTH, controller.Health)
 
