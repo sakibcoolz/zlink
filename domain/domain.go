@@ -8,10 +8,11 @@ import (
 )
 
 type Store struct {
-	log *zap.Logger
-	ms  *model.MemoryStore
-	sc  *model.CountStore
-	mr  *model.MappingRev
+	log         *zap.Logger
+	ms          *model.MemoryStore
+	sc          *model.CountStore
+	mr          *model.MappingRev
+	collections *model.URLCountCollections
 }
 
 type IStore interface {
@@ -20,14 +21,18 @@ type IStore interface {
 	GetUrl(path string) (string, error)
 	SetUrlMapping(url, path string)
 	GetUrlMapping(url string) string
+	SetStack(path string)
+	GetMostUrl(top int) map[string]int
 }
 
-func NewStore(logger *zap.Logger, ms *model.MemoryStore, sc *model.CountStore, mr *model.MappingRev) *Store {
+func NewStore(logger *zap.Logger, ms *model.MemoryStore, sc *model.CountStore,
+	mr *model.MappingRev, collections *model.URLCountCollections) *Store {
 	return &Store{
-		log: logger,
-		ms:  ms,
-		sc:  sc,
-		mr:  mr,
+		log:         logger,
+		ms:          ms,
+		sc:          sc,
+		mr:          mr,
+		collections: collections,
 	}
 }
 
@@ -50,5 +55,16 @@ func NewMappingRev(urLRevMapping map[string]string,
 	return &model.MappingRev{
 		URLRevMapping: urLRevMapping,
 		Mt:            mt,
+	}
+}
+
+func NewUrlCollectionCount(urlCollection model.Collections,
+	mt *sync.Mutex) *model.URLCountCollections {
+	return &model.URLCountCollections{
+		Mt: mt,
+		Collections: model.Collections{
+			URLs:   urlCollection.URLs,
+			Counts: urlCollection.Counts,
+		},
 	}
 }

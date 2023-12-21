@@ -46,3 +46,21 @@ func (s *Service) GetUrl(path string) (string, error) {
 
 	return s.store.GetUrl(path)
 }
+
+func (s *Service) MostVisitUrl(count int) map[string]int {
+	mostUrl := make(map[string]int)
+	urlMap := s.store.GetMostUrl(count)
+
+	for key, value := range urlMap {
+		url, err := s.store.GetUrl(key)
+		if err != nil {
+			s.log.Error("url not found")
+
+			return nil
+		}
+
+		mostUrl[url] = value
+	}
+
+	return mostUrl
+}

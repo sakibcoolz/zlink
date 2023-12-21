@@ -3,12 +3,14 @@ package app
 import (
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 	"zlink/config"
 	"zlink/controller"
 	"zlink/domain"
 	"zlink/literals"
+	"zlink/model"
 	"zlink/service"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +35,12 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	cntStore := domain.NewCountStore(0, new(sync.Mutex))
 
-	store := domain.NewStore(logger, memStore, cntStore, mapRevStore)
+	collectCount := domain.NewUrlCollectionCount(model.Collections{
+		URLs:   make([]string, 0),
+		Counts: make([]int, 0)},
+		new(sync.Mutex))
+
+	store := domain.NewStore(logger, memStore, cntStore, mapRevStore, collectCount)
 
 	service := service.NewService(logger, store)
 
@@ -41,15 +48,41 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	router.Use(gin.Recovery())
 
+	router.Use(CustomMiddleware(store))
+
 	router.GET("/:path", controller.GetUrl)
 
 	preapproute := router.Group(literals.VERSIONONE)
 
-	preapproute.GET("/health", controller.Health)
+	preapproute.GET(literals.HEALTH, controller.Health)
 
-	preapproute.POST("/addurl", controller.AddUrl)
+	preapproute.POST(literals.ADDURL, controller.AddUrl)
+
+	preapproute.GET(literals.MOSTVISIT+"/:count", controller.MostVisit)
 
 	return router
+}
+
+func CustomMiddleware(store *domain.Store) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+
+		path := c.Request.RequestURI
+
+		UrlCountCollection(store, path)
+
+	}
+}
+
+func UrlCountCollection(store *domain.Store, path string) {
+
+	if strings.Contains(path, literals.HEALTH) || strings.Contains(path, literals.ADDURL) || strings.Contains(path, literals.MOSTVISIT) {
+		return
+	}
+
+	paths := strings.Split(path, "/")[1]
+
+	store.SetStack(paths)
 }
 
 func TerminateService(stopService chan os.Signal, log *zap.Logger) {

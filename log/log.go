@@ -17,9 +17,10 @@ func NewLogger() *zap.Logger {
 	}
 	defer func(logger *zap.Logger) {
 		if err := logger.Sync(); err != nil {
-			log.Fatalln("service down", err.Error())
+			log.Println("service down", err.Error())
 		}
 	}(logger)
+
 	logger.Info("Log initialized")
 
 	return logger
