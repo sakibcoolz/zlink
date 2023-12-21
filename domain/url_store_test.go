@@ -122,3 +122,40 @@ func TestStore_GetUrl(t *testing.T) {
 		})
 	}
 }
+
+func TestStore_GetUrlMapping(t *testing.T) {
+	mapRevStore := NewMappingRev(map[string]string{"google.com": "xyz"}, new(sync.Mutex))
+	type fields struct {
+		mr *model.MappingRev
+	}
+	type args struct {
+		url string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   string
+	}{
+		{
+			name: "Pass1",
+			fields: fields{
+				mr: mapRevStore,
+			},
+			args: args{
+				url: "google.com",
+			},
+			want: "xyz",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &Store{
+				mr: tt.fields.mr,
+			}
+			if got := s.GetUrlMapping(tt.args.url); got != tt.want {
+				t.Errorf("Store.GetUrlMapping() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

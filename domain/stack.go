@@ -2,10 +2,14 @@ package domain
 
 import (
 	"slices"
+
+	"go.uber.org/zap"
 )
 
 func (s *Store) SetStack(path string) {
 	if _, err := s.GetUrl(path); err != nil {
+		s.log.Error("path not found in NewMemoryStore", zap.Error(err))
+
 		return
 	}
 
@@ -37,7 +41,7 @@ func (s *Store) GetMostUrl(top int) map[string]int {
 
 	for i := 0; i < len(countData); i++ {
 		for j := 0; j < len(countData); j++ {
-			if countData[i] < countData[j] {
+			if countData[i] > countData[j] {
 				countData[j], countData[i] = countData[i], countData[j]
 				urls[j], urls[i] = urls[i], urls[j]
 			}

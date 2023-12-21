@@ -50,15 +50,15 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	router.Use(CustomMiddleware(store))
 
-	router.GET("/:path", controller.GetUrl)
+	router.GET(literals.PATH, controller.GetUrl)
 
-	preapproute := router.Group("/v1")
+	preapproute := router.Group(literals.V1)
 
 	preapproute.GET(literals.HEALTH, controller.Health)
 
 	preapproute.POST(literals.ADDURL, controller.AddUrl)
 
-	preapproute.GET(literals.MOSTVISIT+"/:count", controller.MostVisit)
+	preapproute.GET(literals.MOSTVISIT+literals.COUNT, controller.MostVisit)
 
 	return router
 }
