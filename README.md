@@ -49,3 +49,29 @@ or run this dierctly
 docker run -e VERSION=v1 -e SERVICEHOST=localhost -e SERVICEPORT=10000 -p 10000:10000 sakibcoolz/zlink_service
 ```
 
+**Local setup**
+
+Local run
+```
+$   make run
+```
+
+Local test
+```
+$   make test
+```
+
+Create Docker image 
+```
+$   make docker-image
+```
+
+Start container
+```
+$   make docker-start
+```
+
+Stop Container
+```
+$   make docker-stop
+```

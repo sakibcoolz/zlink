@@ -13,6 +13,12 @@ run:
 build:
 	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o $(build) ./cmd/
 
+test:
+	SERVICEHOST=$(localhost) \
+	VERSION=$(version) \
+	SERVICEPORT=$(port) \
+	$(GOTEST) ./...
+
 docker-start:
 	make -C compose start
 
