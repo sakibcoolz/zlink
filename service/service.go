@@ -1,7 +1,6 @@
 package service
 
 import (
-	"zlink/config"
 	"zlink/domain"
 	"zlink/model"
 
@@ -10,9 +9,8 @@ import (
 )
 
 type Service struct {
-	log    *zap.Logger
-	store  domain.IStore
-	config *config.Config
+	log   *zap.Logger
+	store domain.IStore
 }
 
 type IService interface {

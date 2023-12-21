@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"zlink/literals"
 )
@@ -34,4 +35,10 @@ func ModifiyUrl(url string) string {
 	}
 
 	return url
+}
+
+func UrlMaker(path string) string {
+	return fmt.Sprintf("http://%s:%s/%s", os.Getenv("SERVICEHOST"),
+		os.Getenv("SERVICEPORT"),
+		path)
 }

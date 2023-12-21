@@ -14,8 +14,10 @@ func (s *Store) UrlStore(data map[string]string) {
 	}()
 	for idx, val := range data {
 		s.ms.Mt.Lock()
+		defer s.ms.Mt.Unlock()
 		s.ms.Data[idx] = val
-		s.ms.Mt.Unlock()
+
+		s.SetUrlMapping(val, idx)
 	}
 }
 
@@ -23,6 +25,7 @@ func (s *Store) GetUrl(path string) (string, error) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			s.log.Error("Recovered from panic", zap.Any("err", rec))
+
 		}
 	}()
 	s.ms.Mt.Lock()
@@ -37,4 +40,19 @@ func (s *Store) GetUrl(path string) (string, error) {
 	}
 
 	return val, nil
+}
+
+func (s *Store) SetUrlMapping(url, path string) {
+	s.mr.Mt.Lock()
+	defer s.mr.Mt.Unlock()
+	s.mr.URLRevMapping[url] = path
+}
+
+func (s *Store) GetUrlMapping(url string) string {
+	var path string
+	s.mr.Mt.Lock()
+	defer s.mr.Mt.Unlock()
+	path = s.mr.URLRevMapping[url]
+
+	return path
 }

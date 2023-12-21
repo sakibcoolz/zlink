@@ -18,5 +18,10 @@ type MemoryStore struct {
 
 type CountStore struct {
 	Count int
-	Mt    sync.Mutex
+	Mt    *sync.Mutex
+}
+
+type MappingRev struct {
+	URLRevMapping map[string]string
+	Mt            *sync.Mutex
 }
