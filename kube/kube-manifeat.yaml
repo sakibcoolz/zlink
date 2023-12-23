@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: zlink
+  name: zlink-v1
   labels:
     app: zlink-short
 spec:
@@ -9,9 +9,44 @@ spec:
   - name: zlink-container
     image: sakibcoolz/zlink_service
     env:
-    - name:  "SERVICEHOST"
+    - name: "SERVICEHOST"
       value: "localhost"
     - name: "VERSION"
-      value: "sakib"
+      value: "v1"
     - name: "SERVICEPORT"
       value: "5000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: zlink-v2
+  labels:
+    app: zlink-short
+spec:
+  containers:
+  - name: zlink-container
+    image: sakibcoolz/zlink_service:v1
+    env:
+    - name: "SERVICEHOST"
+      value: "localhost"
+    - name: "VERSION"
+      value: "v2"
+    - name: "SERVICEPORT"
+      value: "5000"
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: zlinkservice
+  labels:
+    app: zlinkservice
+spec:
+  selector:
+    app: zlink-short
+  type: NodePort
+  ports:
+  - name: "zlinkservice"
+    nodePort: 32000
+    port: 9000
+    targetPort: 5000
