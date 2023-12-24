@@ -3,13 +3,13 @@ package app
 import (
 	"os"
 	"os/signal"
-	"strings"
 	"sync"
 	"syscall"
 	"zlink/config"
 	"zlink/controller"
 	"zlink/domain"
 	"zlink/literals"
+	"zlink/middleware"
 	"zlink/model"
 	"zlink/service"
 
@@ -23,7 +23,7 @@ var (
 )
 
 func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.Engine {
-	go TerminateService(StopService, logger)
+	go terminateService(StopService, logger)
 
 	signal.Notify(StopService, syscall.SIGINT, syscall.SIGTERM)
 
@@ -31,16 +31,16 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	memStore := domain.NewMemoryStore(make(map[string]string), new(sync.Mutex))
 
-	mapRevStore := domain.NewMappingRev(make(map[string]string), new(sync.Mutex))
+	memRevStore := domain.NewMappingRev(make(map[string]string), new(sync.Mutex))
 
 	cntStore := domain.NewCountStore(0, new(sync.Mutex))
 
-	collectCount := domain.NewUrlCollectionCount(model.Collections{
+	collectionStore := domain.NewUrlCollectionCount(model.Collections{
 		URLs:   make([]string, 0),
 		Counts: make([]int, 0)},
 		new(sync.Mutex))
 
-	store := domain.NewStore(logger, memStore, cntStore, mapRevStore, collectCount)
+	store := domain.NewStore(logger, memStore, cntStore, memRevStore, collectionStore)
 
 	service := service.NewService(logger, store)
 
@@ -48,7 +48,7 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 
 	router.Use(gin.Recovery())
 
-	router.Use(CustomMiddleware(store))
+	router.Use(middleware.FilterURL(store))
 
 	router.GET(literals.PATH, controller.GetUrl)
 
@@ -63,29 +63,7 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 	return router
 }
 
-func CustomMiddleware(store *domain.Store) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		path := c.Request.RequestURI
-
-		UrlCountCollection(store, path)
-
-	}
-}
-
-func UrlCountCollection(store *domain.Store, path string) {
-
-	if strings.Contains(path, literals.HEALTH) || strings.Contains(path, literals.ADDURL) || strings.Contains(path, literals.MOSTVISIT) {
-		return
-	}
-
-	paths := strings.Split(path, "/")[1]
-
-	store.SetStack(paths)
-}
-
-func TerminateService(stopService chan os.Signal, log *zap.Logger) {
+func terminateService(stopService chan os.Signal, log *zap.Logger) {
 	log.Info("Service Started")
 
 	if _, ok := <-stopService; ok {

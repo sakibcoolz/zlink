@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// returning actual url against path variable.
 func (c *Controller) GetUrl(ctx *gin.Context) {
 	path := ctx.Param("path")
 

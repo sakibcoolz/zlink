@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// provide top count against count path variable.
 func (c *Controller) MostVisit(ctx *gin.Context) {
 	count, err := strconv.Atoi(ctx.Param("count"))
 	if err != nil {

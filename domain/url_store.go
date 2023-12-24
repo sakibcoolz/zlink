@@ -48,6 +48,7 @@ func (s *Store) SetUrlMapping(url, path string) {
 	s.mr.URLRevMapping[url] = path
 }
 
+// returns short url against actual url
 func (s *Store) GetUrlMapping(url string) string {
 	var path string
 	s.mr.Mt.Lock()

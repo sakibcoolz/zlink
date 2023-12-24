@@ -20,6 +20,7 @@ type IStore interface {
 	UrlStore(map[string]string)
 	GetUrl(path string) (string, error)
 	SetUrlMapping(url, path string)
+	// returns short url against actual url
 	GetUrlMapping(url string) string
 	SetStack(path string)
 	GetMostUrl(top int) map[string]int

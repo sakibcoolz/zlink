@@ -7,6 +7,7 @@ import (
 	"zlink/literals"
 )
 
+// filter for url format return boolean result for url.
 func UrlNotAllowed(url string) bool {
 
 	if strings.Contains(url, literals.LOCALHOST) {
@@ -28,6 +29,7 @@ func UrlNotAllowed(url string) bool {
 	return false
 }
 
+// modify url if it missed http://
 func ModifiyUrl(url string) string {
 
 	if !strings.HasPrefix(url, literals.HTTP) {

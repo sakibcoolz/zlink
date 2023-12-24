@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// Add accept json body and filter for validating struct.
 func (c *Controller) AddUrl(ctx *gin.Context) {
 	var addUrl model.AddUrl
 

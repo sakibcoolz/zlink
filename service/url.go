@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
 func (s *Service) AddUrl(ctx *gin.Context, addUrl model.AddUrl) (string, error) {
 	urlStr := make(chan string)
 	counter := make(chan int)
