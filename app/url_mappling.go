@@ -13,6 +13,7 @@ import (
 	"zlink/model"
 	"zlink/service"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
@@ -45,6 +46,13 @@ func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.En
 	service := service.NewService(logger, store)
 
 	controller := controller.NewController(logger, service, validate)
+
+	configs := cors.DefaultConfig()
+	configs.AllowOrigins = []string{"*"}
+	configs.AllowHeaders = []string{"*"}
+	configs.AllowMethods = []string{"GET", "POST"}
+
+	router.Use(cors.New(configs))
 
 	router.Use(gin.Recovery())
 
