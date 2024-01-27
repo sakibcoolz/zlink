@@ -18,7 +18,7 @@ func (c *Controller) MostVisit(ctx *gin.Context) {
 		return
 	}
 
-	countUrlMap := c.service.MostVisitUrl(count)
+	countUrlMap := c.service.MostVisitUrl(ctx, count)
 	if countUrlMap == nil {
 		utils.ErrorResponse(ctx, errors.New("no data available"), http.StatusInternalServerError)
 

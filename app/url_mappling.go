@@ -9,6 +9,7 @@ import (
 	"zlink/controller"
 	"zlink/domain"
 	"zlink/literals"
+	"zlink/log"
 	"zlink/middleware"
 	"zlink/model"
 	"zlink/service"
@@ -23,8 +24,8 @@ var (
 	StopService = make(chan os.Signal, 1)
 )
 
-func Apps(config *config.Config, logger *zap.Logger, router *gin.Engine) *gin.Engine {
-	go terminateService(StopService, logger)
+func Apps(config *config.Config, logger *log.Log, router *gin.Engine) *gin.Engine {
+	go terminateService(StopService, logger.Log())
 
 	signal.Notify(StopService, syscall.SIGINT, syscall.SIGTERM)
 

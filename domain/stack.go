@@ -3,12 +3,13 @@ package domain
 import (
 	"slices"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
-func (s *Store) SetStack(path string) {
-	if _, err := s.GetUrl(path); err != nil {
-		s.log.Error("path not found in NewMemoryStore", zap.Error(err))
+func (s *Store) SetStack(ctx *gin.Context, path string) {
+	if _, err := s.GetUrl(ctx, path); err != nil {
+		s.log.Error(ctx, "path not found in NewMemoryStore", zap.Error(err))
 
 		return
 	}
@@ -26,7 +27,7 @@ func (s *Store) SetStack(path string) {
 	s.collections.Collections.Counts[idx] += 1
 }
 
-func (s *Store) GetMostUrl(top int) map[string]int {
+func (s *Store) GetMostUrl(ctx *gin.Context, top int) map[string]int {
 	urlMap := make(map[string]int)
 	s.collections.Mt.Lock()
 	data := s.collections.Collections

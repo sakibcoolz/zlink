@@ -5,14 +5,14 @@ import (
 	"sync"
 	"testing"
 	"zlink/domain"
+	lg "zlink/log"
 	"zlink/model"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 func TestService_AddUrl(t *testing.T) {
-	log := zap.NewExample()
+	log := lg.New()
 
 	memStore := domain.NewMemoryStore(make(map[string]string), new(sync.Mutex))
 
@@ -28,7 +28,7 @@ func TestService_AddUrl(t *testing.T) {
 	store := domain.NewStore(log, memStore, cntStore, mapRevStore, collectCount)
 
 	type fields struct {
-		log   *zap.Logger
+		log   *lg.Log
 		store domain.IStore
 	}
 	type args struct {
@@ -85,7 +85,7 @@ func TestService_AddUrl(t *testing.T) {
 }
 
 func TestService_GetUrl(t *testing.T) {
-	log := zap.NewExample()
+	log := lg.New()
 
 	memStore := domain.NewMemoryStore(map[string]string{
 		"xyz": "http://www.google.com",
@@ -103,7 +103,7 @@ func TestService_GetUrl(t *testing.T) {
 	store := domain.NewStore(log, memStore, cntStore, mapRevStore, collectCount)
 
 	type fields struct {
-		log   *zap.Logger
+		log   *lg.Log
 		store domain.IStore
 	}
 	type args struct {
@@ -160,7 +160,7 @@ func TestService_GetUrl(t *testing.T) {
 }
 
 func TestService_MostVisitUrl(t *testing.T) {
-	log := zap.NewExample()
+	log := lg.New()
 
 	memStore := domain.NewMemoryStore(map[string]string{"xyz": "xyz", "abc": "abc", "sfd": "sfd"}, new(sync.Mutex))
 
@@ -173,7 +173,7 @@ func TestService_MostVisitUrl(t *testing.T) {
 	store := domain.NewStore(log, memStore, cntStore, mapRevStore, collectCount)
 
 	type fields struct {
-		log   *zap.Logger
+		log   *lg.Log
 		store domain.IStore
 	}
 	type args struct {

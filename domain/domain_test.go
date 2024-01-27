@@ -4,9 +4,8 @@ import (
 	"reflect"
 	"sync"
 	"testing"
+	"zlink/log"
 	"zlink/model"
-
-	"go.uber.org/zap"
 )
 
 func TestNewStore(t *testing.T) {
@@ -14,10 +13,10 @@ func TestNewStore(t *testing.T) {
 	mapRevStore := NewMappingRev(make(map[string]string), new(sync.Mutex))
 	cntStore := NewCountStore(0, new(sync.Mutex))
 	collectCount := NewUrlCollectionCount(model.Collections{URLs: []string{}, Counts: []int{}}, new(sync.Mutex))
-	log := zap.NewExample()
+	lg := log.New()
 
 	type args struct {
-		logger      *zap.Logger
+		logger      *log.Log
 		ms          *model.MemoryStore
 		sc          *model.CountStore
 		mr          *model.MappingRev
@@ -31,14 +30,14 @@ func TestNewStore(t *testing.T) {
 		{
 			name: "Pass",
 			args: args{
-				logger:      log,
+				logger:      lg,
 				ms:          memStore,
 				sc:          cntStore,
 				mr:          mapRevStore,
 				collections: collectCount,
 			},
 			want: &Store{
-				log:         log,
+				log:         lg,
 				ms:          memStore,
 				sc:          cntStore,
 				mr:          mapRevStore,

@@ -18,7 +18,7 @@ func (c *Controller) GetUrl(ctx *gin.Context) {
 		return
 	}
 
-	url, err := c.service.GetUrl(path)
+	url, err := c.service.GetUrl(ctx, path)
 	if err != nil {
 		utils.ErrorResponse(ctx, err, http.StatusInternalServerError)
 

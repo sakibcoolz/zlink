@@ -3,13 +3,14 @@ package domain
 import (
 	"errors"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
-func (s *Store) UrlStore(data map[string]string) {
+func (s *Store) UrlStore(ctx *gin.Context, data map[string]string) {
 	defer func() {
 		if rec := recover(); rec != nil {
-			s.log.Error("Recovered from panic", zap.Any("err", rec))
+			s.log.Error(ctx, "Recovered from panic", zap.Any("err", rec))
 		}
 	}()
 	for idx, val := range data {
@@ -17,14 +18,14 @@ func (s *Store) UrlStore(data map[string]string) {
 		defer s.ms.Mt.Unlock()
 		s.ms.Data[idx] = val
 
-		s.SetUrlMapping(val, idx)
+		s.SetUrlMapping(ctx, val, idx)
 	}
 }
 
-func (s *Store) GetUrl(path string) (string, error) {
+func (s *Store) GetUrl(ctx *gin.Context, path string) (string, error) {
 	defer func() {
 		if rec := recover(); rec != nil {
-			s.log.Error("Recovered from panic", zap.Any("err", rec))
+			s.log.Error(ctx, "Recovered from panic", zap.Any("err", rec))
 
 		}
 	}()
@@ -34,7 +35,7 @@ func (s *Store) GetUrl(path string) (string, error) {
 	if !ok {
 		err := errors.New("no url mapped for path")
 
-		s.log.Error(err.Error())
+		s.log.Error(ctx, err.Error())
 
 		return val, err
 	}
@@ -42,14 +43,14 @@ func (s *Store) GetUrl(path string) (string, error) {
 	return val, nil
 }
 
-func (s *Store) SetUrlMapping(url, path string) {
+func (s *Store) SetUrlMapping(ctx *gin.Context, url, path string) {
 	s.mr.Mt.Lock()
 	defer s.mr.Mt.Unlock()
 	s.mr.URLRevMapping[url] = path
 }
 
 // returns short url against actual url
-func (s *Store) GetUrlMapping(url string) string {
+func (s *Store) GetUrlMapping(ctx *gin.Context, url string) string {
 	var path string
 	s.mr.Mt.Lock()
 	defer s.mr.Mt.Unlock()

@@ -2,13 +2,14 @@ package domain
 
 import (
 	"sync"
+	"zlink/log"
 	"zlink/model"
 
-	"go.uber.org/zap"
+	"github.com/gin-gonic/gin"
 )
 
 type Store struct {
-	log         *zap.Logger
+	log         *log.Log
 	ms          *model.MemoryStore
 	sc          *model.CountStore
 	mr          *model.MappingRev
@@ -16,17 +17,17 @@ type Store struct {
 }
 
 type IStore interface {
-	GetCounter() int
-	UrlStore(map[string]string)
-	GetUrl(path string) (string, error)
-	SetUrlMapping(url, path string)
+	GetCounter(ctx *gin.Context) int
+	UrlStore(ctx *gin.Context, mk map[string]string)
+	GetUrl(ctx *gin.Context, path string) (string, error)
+	SetUrlMapping(ctx *gin.Context, url, path string)
 	// returns short url against actual url
-	GetUrlMapping(url string) string
-	SetStack(path string)
-	GetMostUrl(top int) map[string]int
+	GetUrlMapping(ctx *gin.Context, url string) string
+	SetStack(ctx *gin.Context, path string)
+	GetMostUrl(ctx *gin.Context, top int) map[string]int
 }
 
-func NewStore(logger *zap.Logger, ms *model.MemoryStore, sc *model.CountStore,
+func NewStore(logger *log.Log, ms *model.MemoryStore, sc *model.CountStore,
 	mr *model.MappingRev, collections *model.URLCountCollections) *Store {
 	return &Store{
 		log:         logger,

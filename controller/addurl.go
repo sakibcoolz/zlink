@@ -15,7 +15,7 @@ func (c *Controller) AddUrl(ctx *gin.Context) {
 	var addUrl model.AddUrl
 
 	if err := ctx.ShouldBindBodyWith(&addUrl, binding.JSON); err != nil {
-		c.log.Error("incorrect json bind with struct", zap.Error(err))
+		c.log.Error(ctx, "incorrect json bind with struct", zap.Error(err))
 
 		utils.BindError(ctx, err)
 
@@ -23,7 +23,7 @@ func (c *Controller) AddUrl(ctx *gin.Context) {
 	}
 
 	if err := c.validate.Struct(&addUrl); err != nil {
-		c.log.Error("invalid with struct", zap.Error(err))
+		c.log.Error(ctx, "invalid with struct", zap.Error(err))
 
 		utils.BindError(ctx, err)
 
@@ -32,7 +32,7 @@ func (c *Controller) AddUrl(ctx *gin.Context) {
 
 	url, err := c.service.AddUrl(ctx, addUrl)
 	if err != nil {
-		c.log.Error(err.Error())
+		c.log.Error(ctx, err.Error())
 
 		utils.ErrorResponse(ctx, err, http.StatusBadRequest)
 

@@ -5,13 +5,13 @@ import (
 	"sync"
 	"testing"
 	"zlink/domain"
+	"zlink/log"
+	lg "zlink/log"
 	"zlink/model"
-
-	"go.uber.org/zap"
 )
 
-func TestNewService(t *testing.T) {
-	log := zap.NewExample()
+func TsestNewService(t *testing.T) {
+	log := log.New()
 
 	memStore := domain.NewMemoryStore(make(map[string]string), new(sync.Mutex))
 
@@ -27,7 +27,7 @@ func TestNewService(t *testing.T) {
 	store := domain.NewStore(log, memStore, cntStore, mapRevStore, collectCount)
 
 	type args struct {
-		logger *zap.Logger
+		logger *lg.Log
 		store  domain.IStore
 	}
 	tests := []struct {

@@ -3,16 +3,15 @@ package domain
 import (
 	"sync"
 	"testing"
+	"zlink/log"
 	"zlink/model"
-
-	"go.uber.org/zap"
 )
 
 func TestStore_GetCounter(t *testing.T) {
 	cntStore := NewCountStore(0, new(sync.Mutex))
 
 	type fields struct {
-		log         *zap.Logger
+		log         *log.Log
 		ms          *model.MemoryStore
 		sc          *model.CountStore
 		mr          *model.MappingRev

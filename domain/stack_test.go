@@ -4,9 +4,8 @@ import (
 	"reflect"
 	"sync"
 	"testing"
+	"zlink/log"
 	"zlink/model"
-
-	"go.uber.org/zap"
 )
 
 func TestStore_SetStack(t *testing.T) {
@@ -14,10 +13,10 @@ func TestStore_SetStack(t *testing.T) {
 	mapRevStore := NewMappingRev(make(map[string]string), new(sync.Mutex))
 	cntStore := NewCountStore(0, new(sync.Mutex))
 	collectCount := NewUrlCollectionCount(model.Collections{URLs: []string{}, Counts: []int{}}, new(sync.Mutex))
-	log := zap.NewExample()
+	lg := log.New()
 
 	type fields struct {
-		log         *zap.Logger
+		log         *log.Log
 		ms          *model.MemoryStore
 		sc          *model.CountStore
 		mr          *model.MappingRev
@@ -34,7 +33,7 @@ func TestStore_SetStack(t *testing.T) {
 		{
 			name: "Pass1",
 			fields: fields{
-				log:         log,
+				log:         lg,
 				ms:          memStore,
 				sc:          cntStore,
 				mr:          mapRevStore,
@@ -47,7 +46,7 @@ func TestStore_SetStack(t *testing.T) {
 		{
 			name: "Pass2",
 			fields: fields{
-				log:         log,
+				log:         lg,
 				ms:          memStore,
 				sc:          cntStore,
 				mr:          mapRevStore,
@@ -60,7 +59,7 @@ func TestStore_SetStack(t *testing.T) {
 		{
 			name: "failed1",
 			fields: fields{
-				log:         log,
+				log:         lg,
 				ms:          memStore,
 				sc:          cntStore,
 				mr:          mapRevStore,
@@ -90,10 +89,9 @@ func TestStore_GetMostUrl(t *testing.T) {
 	mapRevStore := NewMappingRev(make(map[string]string), new(sync.Mutex))
 	cntStore := NewCountStore(0, new(sync.Mutex))
 	collectCount := NewUrlCollectionCount(model.Collections{URLs: []string{"xyz", "abc", "sfd"}, Counts: []int{12, 34, 56}}, new(sync.Mutex))
-	log := zap.NewExample()
-
+	lg := log.New()
 	type fields struct {
-		log         *zap.Logger
+		log         *log.Log
 		ms          *model.MemoryStore
 		sc          *model.CountStore
 		mr          *model.MappingRev
@@ -111,7 +109,7 @@ func TestStore_GetMostUrl(t *testing.T) {
 		{
 			name: "Pass",
 			fields: fields{
-				log:         log,
+				log:         lg,
 				ms:          memStore,
 				sc:          cntStore,
 				mr:          mapRevStore,

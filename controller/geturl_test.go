@@ -10,16 +10,17 @@ import (
 	"zlink/model"
 	"zlink/service"
 
+	"zlink/log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 )
 
 func TestGetUrl(t *testing.T) {
 	os.Setenv("SERVICEHOST", "localhost")
 	os.Setenv("SERVICEPORT", "1000")
-	logger := zap.NewExample()
+	logger := log.New()
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
 

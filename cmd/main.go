@@ -11,15 +11,15 @@ import (
 )
 
 func main() {
-	logger := log.NewLogger()
+	logger := log.New()
 
-	config := config.NewConfig(logger)
+	config := config.NewConfig(logger.Log())
 
 	router := gin.Default()
 
 	router = app.Apps(config, logger, router)
 
 	if err := router.Run(fmt.Sprintf(":%d", config.GetServiceConfig().Port)); err != nil {
-		logger.Fatal("Service Error", zap.Error(err))
+		logger.Log().Fatal("Service Error", zap.Error(err))
 	}
 }

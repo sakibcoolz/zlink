@@ -2,24 +2,24 @@ package service
 
 import (
 	"zlink/domain"
+	"zlink/log"
 	"zlink/model"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 type Service struct {
-	log   *zap.Logger
+	log   *log.Log
 	store domain.IStore
 }
 
 type IService interface {
 	AddUrl(ctx *gin.Context, addUrl model.AddUrl) (string, error)
-	GetUrl(path string) (string, error)
-	MostVisitUrl(count int) map[string]int
+	GetUrl(ctx *gin.Context, path string) (string, error)
+	MostVisitUrl(ctx *gin.Context, count int) map[string]int
 }
 
-func NewService(logger *zap.Logger, store domain.IStore) *Service {
+func NewService(logger *log.Log, store domain.IStore) *Service {
 	return &Service{
 		log:   logger,
 		store: store,
