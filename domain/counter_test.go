@@ -1,10 +1,13 @@
 package domain
 
 import (
+	"net/http"
 	"sync"
 	"testing"
 	"zlink/log"
 	"zlink/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestStore_GetCounter(t *testing.T) {
@@ -17,15 +20,30 @@ func TestStore_GetCounter(t *testing.T) {
 		mr          *model.MappingRev
 		collections *model.URLCountCollections
 	}
+
+	type args struct {
+		ctx *gin.Context
+	}
+
 	tests := []struct {
 		name   string
 		fields fields
+		args   args
 		want   int
 	}{
 		{
 			name: "Pass1",
 			fields: fields{
 				sc: cntStore,
+			},
+			args: args{
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 			},
 			want: 1,
 		},
@@ -39,7 +57,7 @@ func TestStore_GetCounter(t *testing.T) {
 				mr:          tt.fields.mr,
 				collections: tt.fields.collections,
 			}
-			if got := s.GetCounter(); got != tt.want {
+			if got := s.GetCounter(tt.args.ctx); got != tt.want {
 				t.Errorf("Store.GetCounter() = %v, want %v", got, tt.want)
 			}
 		})

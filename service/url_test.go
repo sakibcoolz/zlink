@@ -1,6 +1,7 @@
 package service
 
 import (
+	"net/http"
 	"reflect"
 	"sync"
 	"testing"
@@ -49,7 +50,13 @@ func TestService_AddUrl(t *testing.T) {
 				store: store,
 			},
 			args: args{
-				ctx:    &gin.Context{},
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 				addUrl: model.AddUrl{URL: "wwww.google.com"},
 			},
 			want:    "",
@@ -62,7 +69,13 @@ func TestService_AddUrl(t *testing.T) {
 				store: store,
 			},
 			args: args{
-				ctx:    &gin.Context{},
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 				addUrl: model.AddUrl{URL: "http://localhost:8080"},
 			},
 			want:    "",
@@ -107,6 +120,7 @@ func TestService_GetUrl(t *testing.T) {
 		store domain.IStore
 	}
 	type args struct {
+		ctx  *gin.Context
 		path string
 	}
 	tests := []struct {
@@ -123,6 +137,13 @@ func TestService_GetUrl(t *testing.T) {
 				store: store,
 			},
 			args: args{
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 				path: "xyz",
 			},
 			want:    "http://www.google.com",
@@ -136,6 +157,13 @@ func TestService_GetUrl(t *testing.T) {
 			},
 			args: args{
 				path: "yz",
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 			},
 			want:    "",
 			wantErr: true,
@@ -147,7 +175,7 @@ func TestService_GetUrl(t *testing.T) {
 				log:   tt.fields.log,
 				store: tt.fields.store,
 			}
-			got, err := s.GetUrl(tt.args.path)
+			got, err := s.GetUrl(tt.args.ctx, tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Service.GetUrl() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -177,6 +205,7 @@ func TestService_MostVisitUrl(t *testing.T) {
 		store domain.IStore
 	}
 	type args struct {
+		ctx   *gin.Context
 		count int
 	}
 	tests := []struct {
@@ -191,7 +220,15 @@ func TestService_MostVisitUrl(t *testing.T) {
 				log:   log,
 				store: store,
 			},
-			args: args{count: 2},
+			args: args{
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
+				count: 2},
 			want: map[string]int{
 				"sfd": 56,
 				"abc": 34,
@@ -204,7 +241,7 @@ func TestService_MostVisitUrl(t *testing.T) {
 				log:   tt.fields.log,
 				store: tt.fields.store,
 			}
-			if got := s.MostVisitUrl(tt.args.count); !reflect.DeepEqual(got, tt.want) {
+			if got := s.MostVisitUrl(tt.args.ctx, tt.args.count); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Service.MostVisitUrl() = %v, want %v", got, tt.want)
 			}
 		})

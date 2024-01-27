@@ -1,11 +1,13 @@
 package domain
 
 import (
+	"net/http"
 	"sync"
 	"testing"
+	"zlink/log"
 	"zlink/model"
 
-	"go.uber.org/zap"
+	"github.com/gin-gonic/gin"
 )
 
 func TestStore_UrlStore(t *testing.T) {
@@ -14,13 +16,14 @@ func TestStore_UrlStore(t *testing.T) {
 	cntStore := NewCountStore(0, new(sync.Mutex))
 
 	type fields struct {
-		log *zap.Logger
+		log *log.Log
 		ms  *model.MemoryStore
 		sc  *model.CountStore
 		mr  *model.MappingRev
 	}
 	type args struct {
 		data map[string]string
+		ctx  *gin.Context
 	}
 	tests := []struct {
 		name   string
@@ -30,13 +33,20 @@ func TestStore_UrlStore(t *testing.T) {
 		{
 			name: "Pass1",
 			fields: fields{
-				log: &zap.Logger{},
+				log: log.New(),
 				ms:  memStore,
 				sc:  cntStore,
 				mr:  mapRevStore,
 			},
 			args: args{
 				data: map[string]string{"skm": "http://www.google.com"},
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -48,7 +58,7 @@ func TestStore_UrlStore(t *testing.T) {
 				sc:  tt.fields.sc,
 				mr:  tt.fields.mr,
 			}
-			s.UrlStore(tt.args.data)
+			s.UrlStore(tt.args.ctx, tt.args.data)
 		})
 	}
 }
@@ -59,13 +69,14 @@ func TestStore_GetUrl(t *testing.T) {
 	cntStore := NewCountStore(0, new(sync.Mutex))
 
 	type fields struct {
-		log *zap.Logger
+		log *log.Log
 		ms  *model.MemoryStore
 		sc  *model.CountStore
 		mr  *model.MappingRev
 	}
 	type args struct {
 		path string
+		ctx  *gin.Context
 	}
 	tests := []struct {
 		name    string
@@ -77,13 +88,20 @@ func TestStore_GetUrl(t *testing.T) {
 		{
 			name: "Pass1",
 			fields: fields{
-				log: zap.NewExample(),
+				log: log.New(),
 				ms:  memStore,
 				sc:  cntStore,
 				mr:  mapRevStore,
 			},
 			args: args{
 				path: "skm",
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 			},
 			want:    "google.com",
 			wantErr: false,
@@ -91,13 +109,20 @@ func TestStore_GetUrl(t *testing.T) {
 		{
 			name: "Failed",
 			fields: fields{
-				log: zap.NewExample(),
+				log: log.New(),
 				ms:  memStore,
 				sc:  cntStore,
 				mr:  mapRevStore,
 			},
 			args: args{
 				path: "sk",
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 			},
 			want:    "",
 			wantErr: true,
@@ -111,7 +136,7 @@ func TestStore_GetUrl(t *testing.T) {
 				sc:  tt.fields.sc,
 				mr:  tt.fields.mr,
 			}
-			got, err := s.GetUrl(tt.args.path)
+			got, err := s.GetUrl(tt.args.ctx, tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Store.GetUrl() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -130,6 +155,7 @@ func TestStore_GetUrlMapping(t *testing.T) {
 	}
 	type args struct {
 		url string
+		ctx *gin.Context
 	}
 	tests := []struct {
 		name   string
@@ -144,6 +170,13 @@ func TestStore_GetUrlMapping(t *testing.T) {
 			},
 			args: args{
 				url: "google.com",
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 			},
 			want: "xyz",
 		},
@@ -153,7 +186,7 @@ func TestStore_GetUrlMapping(t *testing.T) {
 			s := &Store{
 				mr: tt.fields.mr,
 			}
-			if got := s.GetUrlMapping(tt.args.url); got != tt.want {
+			if got := s.GetUrlMapping(tt.args.ctx, tt.args.url); got != tt.want {
 				t.Errorf("Store.GetUrlMapping() = %v, want %v", got, tt.want)
 			}
 		})

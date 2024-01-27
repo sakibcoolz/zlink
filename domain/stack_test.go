@@ -1,11 +1,14 @@
 package domain
 
 import (
+	"net/http"
 	"reflect"
 	"sync"
 	"testing"
 	"zlink/log"
 	"zlink/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestStore_SetStack(t *testing.T) {
@@ -23,6 +26,7 @@ func TestStore_SetStack(t *testing.T) {
 		collections *model.URLCountCollections
 	}
 	type args struct {
+		ctx  *gin.Context
 		path string
 	}
 	tests := []struct {
@@ -40,6 +44,13 @@ func TestStore_SetStack(t *testing.T) {
 				collections: collectCount,
 			},
 			args: args{
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 				path: "xyz",
 			},
 		},
@@ -53,6 +64,13 @@ func TestStore_SetStack(t *testing.T) {
 				collections: collectCount,
 			},
 			args: args{
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 				path: "xyz",
 			},
 		},
@@ -66,6 +84,13 @@ func TestStore_SetStack(t *testing.T) {
 				collections: collectCount,
 			},
 			args: args{
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 				path: "yz",
 			},
 		},
@@ -79,7 +104,7 @@ func TestStore_SetStack(t *testing.T) {
 				mr:          tt.fields.mr,
 				collections: tt.fields.collections,
 			}
-			s.SetStack(tt.args.path)
+			s.SetStack(tt.args.ctx, tt.args.path)
 		})
 	}
 }
@@ -99,6 +124,7 @@ func TestStore_GetMostUrl(t *testing.T) {
 	}
 	type args struct {
 		top int
+		ctx *gin.Context
 	}
 	tests := []struct {
 		name   string
@@ -117,6 +143,13 @@ func TestStore_GetMostUrl(t *testing.T) {
 			},
 			args: args{
 				top: 2,
+				ctx: &gin.Context{
+					Request: &http.Request{
+						Header: http.Header{
+							"skm": []string{""},
+						},
+					},
+				},
 			},
 			want: map[string]int{
 				"sfd": 56,
@@ -133,7 +166,7 @@ func TestStore_GetMostUrl(t *testing.T) {
 				mr:          tt.fields.mr,
 				collections: tt.fields.collections,
 			}
-			if got := s.GetMostUrl(tt.args.top); !reflect.DeepEqual(got, tt.want) {
+			if got := s.GetMostUrl(tt.args.ctx, tt.args.top); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Store.GetMostUrl() = %v, want %v", got, tt.want)
 			}
 		})

@@ -8,6 +8,7 @@ run:
 	SERVICEHOST=$(localhost) \
 	VERSION=$(version) \
 	SERVICEPORT=$(port) \
+	GIN_MODE="release" \
 	$(GORUN) cmd/main.go
 
 build:

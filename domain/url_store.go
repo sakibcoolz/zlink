@@ -26,7 +26,6 @@ func (s *Store) GetUrl(ctx *gin.Context, path string) (string, error) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			s.log.Error(ctx, "Recovered from panic", zap.Any("err", rec))
-
 		}
 	}()
 	s.ms.Mt.Lock()
